@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:ui": "npx playwright test --ui",
+    "lint": "npx eslint . --ext .ts",
+    "format": "npx prettier --write .",
+    "report": "npx playwright show-report",
+    "typecheck": "npx tsc -p tsconfig.json --noEmit"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rrmytme/Playwright101.git"
@@ -17,9 +26,16 @@
   },
   "homepage": "https://github.com/rrmytme/Playwright101#readme",
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@playwright/test": "^1.55.0",
     "@types/node": "^24.3.0",
-    "@axe-core/playwright": "^4.10.2"
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.2.2",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "mysql2": "^3.14.3"
+  }
 }

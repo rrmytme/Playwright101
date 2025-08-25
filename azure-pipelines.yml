@@ -1,0 +1,30 @@
+# azure-pipelines.yml
+trigger:
+  - main
+
+pool:
+  vmImage: "ubuntu-latest"
+
+steps:
+  - task: NodeTool@0
+    inputs: { versionSpec: "20.x" }
+
+  - script: npm ci
+    displayName: Install deps
+
+  - script: npx playwright install --with-deps
+    displayName: Install browsers
+
+  - script: npx playwright test
+    displayName: Run tests
+    env:
+      BASE_URL: $(BASE_URL)
+      USER_EMAIL: $(USER_EMAIL)
+      USER_PASSWORD: $(USER_PASSWORD)
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: "JUnit"
+      testResultsFiles: "results/junit.xml"
+  
