@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import Wrapper from "../../base/wrapper";
+import Wrapper from "../../base/Wrapper";
 import LoginPage from "../../pages/LoginPage";
 import DashboardPage from "../../pages/DashboardPage";
 

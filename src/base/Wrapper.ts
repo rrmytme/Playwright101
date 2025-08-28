@@ -103,6 +103,29 @@ export default class Wrapper {
   public getUrl(): string {
     return this.page.url();
   }
+  public async reloadPage() {
+    if (!this.page)
+      throw new Error("Page object not initialised for UI actions");
+    await test.step("Reload current page", async () => {
+      await this.page.reload();
+    });
+  }
+  public async goBack() {
+    if (!this.page)
+      throw new Error("Page object not initialised for UI actions");
+    await test.step("Navigate back", async () => {
+      const response = await this.page.goBack();
+      if (!response) console.warn("No previous page in history");
+    });
+  }
+  public async goForward() {
+    if (!this.page)
+      throw new Error("Page object not initialised for UI actions");
+    await test.step("Navigate forward", async () => {
+      const response = await this.page.goForward();
+      if (!response) console.warn("No forward page in history");
+    });
+  }
 
   // ====== Handle Tabs ======
   public async closeTab(options?: { tabId?: number }) {
@@ -162,6 +185,17 @@ export default class Wrapper {
       data: body,
       ...options,
     });
+    return res;
+  }
+  public async apiPut(endpoint: string, body: any, options?: any) {
+    const res = await this.apiContext.put(endpoint, {
+      data: body,
+      ...options,
+    });
+    return res;
+  }
+  public async apiDelete(endpoint: string, options?: any) {
+    const res = await this.apiContext.delete(endpoint, options);
     return res;
   }
   public async expectStatus(response, code: number) {

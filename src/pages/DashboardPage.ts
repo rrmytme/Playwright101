@@ -1,4 +1,4 @@
-import Wrapper from "../base/wrapper";
+import Wrapper from "../base/Wrapper";
 
 export default class DashboardPage {
   private wrapper: Wrapper;
