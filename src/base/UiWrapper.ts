@@ -1,13 +1,6 @@
 // master control layer. Centralizes locators, waits, navigation, and API calls.
 
-import {
-  APIRequestContext,
-  request,
-  Page,
-  Locator,
-  test,
-  expect,
-} from "@playwright/test";
+import { Page, Locator, test, expect } from "@playwright/test";
 
 export default class Wrapper {
   private page: Page;
@@ -75,8 +68,46 @@ export default class Wrapper {
     return locator;
   }
 
+  public async fingByTestId(testId: string): Promise<Locator> {
+    return this.page.locator(`[data-testid="${testId}"]`);
+  }
+
+  public async findByRole(
+    role: Parameters<Page["getByRole"]>[0],
+    name?: string
+  ): Promise<Locator> {
+    return this.page.getByRole(role, { name });
+  }
+
+  public async findByLabel(label: string): Promise<Locator> {
+    return this.page.getByLabel(label);
+  }
+
+  public async findByPlaceholder(placeholder: string): Promise<Locator> {
+    return this.page.getByPlaceholder(placeholder);
+  }
+
+  public async findByAltText(altText: string): Promise<Locator> {
+    return this.page.getByAltText(altText);
+  }
+
+  public async findByTitle(title: string): Promise<Locator> {
+    return this.page.getByTitle(title);
+  }
+
+  public async findByText(text: string): Promise<Locator> {
+    return this.page.getByText(text, { exact: true });
+  }
+
   locatorByText(text: string): Locator {
     return this.page.getByText(text, { exact: true });
+  }
+
+  public async getByAttribute(
+    attribute: string,
+    value: string
+  ): Promise<Locator> {
+    return this.page.locator(`[${attribute}="${value}"]`);
   }
 
   // ====== NAVIGATION ======
@@ -112,13 +143,173 @@ export default class Wrapper {
     });
   }
 
+  // ====== HANDLE TABLE ======
+
+  public async getTableRowCount(selector: string): Promise<number> {
+    const rows = this.page.locator(`${selector} tbody tr`);
+    return await rows.count();
+  }
+
+  public async getTableColumnCount(selector: string): Promise<number> {
+    const columns = this.page.locator(`${selector} thead tr th`);
+    return await columns.count();
+  }
+
+  public async getCellText(
+    selector: string,
+    rowIndex: number,
+    colIndex: number
+  ): Promise<string> {
+    const cell = this.page
+      .locator(`${selector} tbody tr`)
+      .nth(rowIndex)
+      .locator("td")
+      .nth(colIndex);
+    return (await cell.textContent()) ?? "";
+  }
+
+  public async getRowData(
+    selector: string,
+    rowIndex: number
+  ): Promise<string[]> {
+    const row = this.page.locator(`${selector} tbody tr`).nth(rowIndex);
+    const cells = row.locator("td");
+    const cellCount = await cells.count();
+    const data: string[] = [];
+
+    for (let i = 0; i < cellCount; i++) {
+      data.push((await cells.nth(i).textContent()) ?? "");
+    }
+
+    return data;
+  }
+
+  public async findRowByCellText(
+    selector: string,
+    columnIndex: number,
+    searchText: string
+  ): Promise<number> {
+    const rows = this.page.locator(`${selector} tbody tr`);
+    const rowCount = await rows.count();
+
+    for (let i = 0; i < rowCount; i++) {
+      const cell = rows.nth(i).locator("td").nth(columnIndex);
+      const text = await cell.textContent();
+      if (text?.trim() === searchText.trim()) {
+        return i;
+      }
+    }
+
+    throw new Error(
+      `No row found with text "${searchText}" in column ${columnIndex}`
+    );
+  }
+
   // ====== Handle Tabs ======
+  public async switchToTab(index: number): Promise<void> {
+    if (!this.page) throw new Error("Page object not initialised");
+
+    const pages = this.page.context().pages();
+    if (index < 0 || index >= pages.length) {
+      throw new Error(
+        `Tab index ${index} is out of bounds. Found ${pages.length} tabs.`
+      );
+    }
+
+    await test.step(`Switching to tab ${index}`, async () => {
+      const targetPage = pages[index];
+      await targetPage.bringToFront(); // Optional: visually focus tab
+      this.page = targetPage;
+    });
+  }
+
   public async closeTab(options?: { tabId?: number }) {
     if (options?.tabId) {
       await this.page.context().pages()[options.tabId].close();
     } else {
       await this.page.close();
     }
+  }
+
+  public async getOpenTabsCount(): Promise<number> {
+    return this.page.context().pages().length;
+  }
+
+  public async switchToLastTab(): Promise<void> {
+    const pages = this.page.context().pages();
+    await this.switchToTab(pages.length - 1);
+  }
+
+  public async switchToFirstTab(): Promise<void> {
+    await this.switchToTab(0);
+  }
+
+  public async switchToNextTab(): Promise<void> {
+    const pages = this.page.context().pages();
+    const currentIndex = pages.indexOf(this.page);
+    const nextIndex = (currentIndex + 1) % pages.length;
+    await this.switchToTab(nextIndex);
+  }
+
+  public async switchToPreviousTab(): Promise<void> {
+    const pages = this.page.context().pages();
+    const currentIndex = pages.indexOf(this.page);
+    const prevIndex = (currentIndex - 1 + pages.length) % pages.length;
+    await this.switchToTab(prevIndex);
+  }
+
+  public async closeCurrentTabAndSwitchTo(index: number): Promise<void> {
+    await this.page.close();
+    await this.switchToTab(index);
+  }
+
+  public async closeAllTabsExcept(index: number): Promise<void> {
+    const pages = this.page.context().pages();
+    for (let i = 0; i < pages.length; i++) {
+      if (i !== index) {
+        await pages[i].close();
+      }
+    }
+    await this.switchToTab(index);
+  }
+
+  // ====== HANDLE FRAMES ======
+  public async switchToFrame(nameOrSelector: string): Promise<void> {
+    if (!this.page) throw new Error("Page object not initialised");
+
+    await test.step(`Switching to frame: ${nameOrSelector}`, async () => {
+      const frame =
+        this.page.frame({ name: nameOrSelector }) ??
+        this.page.frame({ url: new RegExp(nameOrSelector) });
+
+      if (!frame) throw new Error(`Frame '${nameOrSelector}' not found`);
+      // You cannot assign a Frame to this.page (which is a Page), so consider storing the frame in a separate property if needed.
+      // Example: this.currentFrame = frame;
+    });
+  }
+
+  public async switchToMainFrame(): Promise<void> {
+    if (!this.page) throw new Error("Page object not initialised");
+    await test.step("Switching to main frame", async () => {
+      // No action needed; just a placeholder to indicate switching back to main frame
+      // Example: this.currentFrame = null; // if you were storing the current frame
+    });
+  }
+
+  public async getFrameByName(name: string) {
+    const frame = this.page.frame({ name });
+    if (!frame) throw new Error(`Frame with name '${name}' not found`);
+    return frame;
+  }
+
+  public async getFrameByUrl(url: string | RegExp) {
+    const frame = this.page.frame({ url });
+    if (!frame) throw new Error(`Frame with URL '${url}' not found`);
+    return frame;
+  }
+
+  public async getAllFrames() {
+    return this.page.frames();
   }
 
   // ====== UI ACTIONS ======
