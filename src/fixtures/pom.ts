@@ -1,9 +1,9 @@
 // fixtures/pom.ts
 
 import { test as base } from "@playwright/test"; // Import Playwright's base test
-import Wrapper from "src/base/Wrapper"; // Custom wrapper for Playwright's page object
-import LoginPage from "../pages/LoginPage"; // Page object for the login page
-import DashboardPage from "src/pages/DashboardPage"; // Page object for the dashboard page
+import Wrapper from "src/base/Wrapper-Class-Workflow"; // Custom wrapper for Playwright's page object
+import LoginPage from "../pages/LoginPage-Class-Workflow"; // Page object for the login page
+import DashboardPage from "src/pages/DashboardPage-Class-Workflow"; // Page object for the dashboard page
 
 // Define the types for the fixtures to be injected into tests
 type Fixtures = {

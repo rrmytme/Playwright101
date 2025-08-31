@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
-import DashboardPage from "../../pages/DashboardPage";
-import Wrapper from "../../base/Wrapper";
+import DashboardPage from "../../pages/DashboardPage-Class-Workflow";
+import Wrapper from "../../base/Wrapper-Class-Workflow";
 
 test("Create order via API, verify in UI", async ({ page, request }) => {
   const wrapper = new Wrapper(page);

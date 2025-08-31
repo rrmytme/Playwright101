@@ -1,4 +1,4 @@
-import Wrapper from "../../base/Wrapper";
+import Wrapper from "../../base/Wrapper-Class-Workflow";
 import { test } from "src/fixtures/pom";
 
 test("Create order via API, verify in UI", async ({

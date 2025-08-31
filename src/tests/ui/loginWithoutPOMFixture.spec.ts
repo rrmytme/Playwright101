@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
-import Wrapper from "../../base/Wrapper";
-import LoginPage from "../../pages/LoginPage";
-import DashboardPage from "../../pages/DashboardPage";
+import Wrapper from "../../base/Wrapper-Class-Workflow";
+import LoginPage from "../../pages/LoginPage-Class-Workflow";
+import DashboardPage from "../../pages/DashboardPage-Class-Workflow";
 
 test("Valid login navigates to dashboard", async ({ page }) => {
   const wrapper = new Wrapper(page);

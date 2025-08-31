@@ -1,4 +1,4 @@
-import Wrapper from "../base/Wrapper";
+import Wrapper from "../base/Wrapper-Class-Workflow";
 
 export default class LoginPage {
   private wrapper: Wrapper;
