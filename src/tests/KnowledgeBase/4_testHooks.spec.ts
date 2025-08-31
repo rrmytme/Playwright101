@@ -87,3 +87,35 @@ test("admin can list users", async ({ request, adminToken }) => {
   });
   expect(res.ok()).toBeTruthy();
 });
+
+// ---------- 6. describe confifure, Test step, only, skip, fixme ----------
+test.describe.configure({ mode: "parallel" }); // or "serial", "default", "each"...
+test.describe("Order management", () => {
+  // Override baseURL for all tests in this describe block
+  test.use({ baseURL: "https://staging.your-app.test" });
+  test("can create order1", async ({ page }) => {
+    test.step("Creating a new order1.1", async () => {
+      await page.click("#newOrder");
+      await expect(page.locator(".order-status")).toHaveText("Created");
+    });
+    test.step("Creating a new order1.2", async () => {
+      await page.click("#newOrder");
+      await expect(page.locator(".order-status")).toHaveText("Created");
+    });
+  });
+
+  test.only("can create order2", async ({ page }) => {
+    await page.click("#newOrder");
+    await expect(page.locator(".order-status")).toHaveText("Created");
+  });
+
+  test.skip("can create order3", async ({ page }) => {
+    await page.click("#newOrder");
+    await expect(page.locator(".order-status")).toHaveText("Created");
+  });
+
+  test.fixme("can cancel order1", async ({ page }) => {
+    await page.click(".order:first-child >> text=Cancel");
+    await expect(page.locator("fix here")).toHaveText("Cancelled");
+  });
+});

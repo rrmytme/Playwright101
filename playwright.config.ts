@@ -3,7 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   // Directory for test files, you can give any directory name
-  testDir: "./tests",
+  testDir: "./src/tests",
 
   // Run tests in parallel mode at the file level
   fullyParallel: true,
@@ -59,12 +59,12 @@ export default defineConfig({
         // devtools: true, // uncomment to open devtools on each browser launch
       },
     },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } },
-    // Example mobile web
-    { name: "mobile-chrome", use: { ...devices["Pixel 5"] } },
+    // { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    // { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    // // Example mobile web
+    // { name: "mobile-chrome", use: { ...devices["Pixel 5"] } },
   ],
 
   // Optional: pre-auth global setup to save storage state files
-  globalSetup: require.resolve("./config/global-setup"),
+  // globalSetup: require.resolve("./config/global-setup"),
 });
