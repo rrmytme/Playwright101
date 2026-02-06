@@ -67,4 +67,10 @@ export default defineConfig({
 
   // Optional: pre-auth global setup to save storage state files
   // globalSetup: require.resolve("./config/global-setup"),
+
+  // timeouts defaults explained:
+  // Test Timeout	30,000 ms	Max time for an entire test (includes setup, hooks, and execution)
+  // Assertion Timeout	5,000 ms	Max time for expect() assertions to pass (e.g., toHaveText())
+  // Action Timeout	0 ms	No timeout by default for actions like click(), fill(), etc.
+  // Navigation Timeout	30,000 ms	Max time for navigation methods like goto() or waitForNavigation()
 });

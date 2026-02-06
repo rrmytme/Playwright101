@@ -1,4 +1,4 @@
-const { test, expect } = require("../utils/axe-test");
+const { test, expect } = require("../../utils/axe-test");
 
 test.describe("accessiblity testing examples", () => {
   test("example using custom fixture", async ({ page, makeAxeBuilder }) => {

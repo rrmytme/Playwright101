@@ -1,5 +1,6 @@
-import { test as base } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+// this file is used to set up a custom Playwright test with accessibility testing using axe-core
+import { test as base } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 type AxeFixture = {
   makeAxeBuilder: () => AxeBuilder;
@@ -11,11 +12,12 @@ type AxeFixture = {
 // a consistently configured AxeBuilder instance.
 export const test = base.extend<AxeFixture>({
   makeAxeBuilder: async ({ page }, use) => {
-    const makeAxeBuilder = () => new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .exclude('#commonly-reused-element-with-known-issue');
+    const makeAxeBuilder = () =>
+      new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+        .exclude("#commonly-reused-element-with-known-issue");
 
     await use(makeAxeBuilder);
-  }
+  },
 });
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";
