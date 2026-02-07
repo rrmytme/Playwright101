@@ -53,3 +53,8 @@ console.log("Generated String:", testString);
 
 let score = calculate(testString);
 console.log("Score:", score);
+
+/*
+the above solution provided using De Bruijn (recursive) algorithm, which generates a sequence of digits that covers all possible combinations of a given length.
+the other possible approach could be using an iterative method to generate the sequences.
+and we can use Greedy builder to construct the sequences in a more efficient way but the con is, it may not cover all possible combinations.*/
